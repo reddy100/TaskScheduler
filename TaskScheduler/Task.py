@@ -1,4 +1,4 @@
-from TaskScheduler.Dependency import TimeBasedDependency, TaskBasedDependency
+from TaskScheduler.TaskScheduler.Dependency import TimeBasedDependency, TaskBasedDependency
 
 class Task(object):
     def __init__(self, taskId, listOfDependencies, description = 'Default Task'):
@@ -8,19 +8,20 @@ class Task(object):
         self.listOfTimeDependencies = []
         self.listOfTaskDependencies = []
         self.isComplete = False
+        self.assignDependencies()
 
     #TODO try to call this during object creation so it doesnt need to be called seperately
     def assignDependencies(self):
-        for index in range(len(self.listOfDependences)):
-            dependency = self.listOfDependences.pop(index)
+        for dependency in self.listOfDependencies:
             if isinstance(dependency, TimeBasedDependency):
                 self.listOfTimeDependencies.append(dependency)
             elif isinstance(dependency, TaskBasedDependency):
                 self.listOfTaskDependencies.append(dependency)
-        if self.listOfTimeDependencies():
-            sorted(self.listOfTimeDependencies(), key = lambda x:x.timeDependency)
+        if self.listOfTimeDependencies:
+            sorted(self.listOfTimeDependencies, key = lambda x:x.timeDependency)
+            self.listOfDependencies=None
 
-    def isReady(self, listOfCompletedTasks):
+    def isReady(self, listOfCompletedTasks=[]):
         for dependency in self.listOfTimeDependencies + self.listOfTaskDependencies:
             if not dependency.isReady(listOfCompletedTasks):
                 return False

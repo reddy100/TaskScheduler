@@ -1,4 +1,4 @@
-from TaskScheduler.TaskList import TaskList
+from TaskScheduler.TaskScheduler.TaskList import TaskList
 
 class Scheduler(object):
     def __init__(self, listOfTasks):
