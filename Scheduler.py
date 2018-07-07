@@ -11,13 +11,13 @@ class Scheduler(object):
         if not firstTask:
             return
         nextTaskToBeProcessed = firstTask
-        while nextTaskToBeProcessed and not self._tasksComplete(taskList):
+        while nextTaskToBeProcessed and not self._allTasksComplete(taskList):
             nextTaskToBeProcessed.processTask()
+            nextTaskToBeProcessed.isComplete = True
             taskList.listOfCompletedTasks.append(nextTaskToBeProcessed)
             nextTaskToBeProcessed = taskList.getNextTask(nextTaskToBeProcessed)
 
 
 
-    def _tasksComplete(self,taskList):
-        numberOfRemainingTasks = len(taskList.listOfPureTimeDependentTasks)+len(taskList.listOfPureTaskDependentTasks)+len(taskList.listOfMixedDependencyTasks)
-        return numberOfRemainingTasks==0
+    def _allTasksComplete(self,taskList):
+        return taskList.totalOpenTasks==0
