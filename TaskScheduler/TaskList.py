@@ -13,8 +13,7 @@ class TaskList(object):
 
     # TODO try to call this during object creation so it doesnt need to be called seperately
     def assignTasks(self):
-        for index in range(len(self.listOfTasks)):
-            task = self.listOfTasks.pop(index)
+        for task in self.listOfTasks:
             self.taskDependencyGraph[task] = task.listOfTaskDependencies
             self._assignParentGraph(task)
             if task.isPureTimeDependentTask():
@@ -24,7 +23,8 @@ class TaskList(object):
             else:
                 self.listOfMixedDependencyTasks.append(task)
         if self.listOfPureTimeDependentTasks:
-            sorted(self.listOfPureTimeDependentTasks(), key=lambda x: x.listOfTimeDependencies[0])
+            sorted(self.listOfPureTimeDependentTasks, key=lambda x: x.listOfTimeDependencies[0])
+        self.listOfTasks=None
 
     def _assignParentGraph(self, task):
         for taskDependency in task.listOfTaskDependencies:
@@ -46,12 +46,13 @@ class TaskList(object):
             print('Unable to find starting task for current list. Deadlocked')
             return
 
-    def _waitTillReady(self, task):
+    def getTimeNow(self):
         now = datetime.now()
-        now_time = now.time()
-        timeToWait = task.listOfTimeDependencies[0] - now_time
-        time.sleep(timeToWait)
+        return now.time()
 
+    def _waitTillReady(self, task):
+        timeToWait = task.listOfTimeDependencies[0] - self.getTimeNow()
+        time.sleep(timeToWait)
 
     def getNextTask(self, currentTask):
         listOfNextTasks = self.currentToNextTasksGraph.get(currentTask)
